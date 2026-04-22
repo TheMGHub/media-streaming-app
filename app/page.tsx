@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { AddVideoForm } from "@/components/AddVideoForm";
 import { PlaylistSidebar } from "@/components/PlaylistSidebar";
 import { VideoPlayer } from "@/components/VideoPlayer";
@@ -10,6 +10,7 @@ import { savePlaylist } from "@/lib/storageUtils";
 import { Playlist, Video } from "@/lib/types";
 
 export default function Home() {
+  const fallbackIdCounter = useRef(0);
   const [playlist, setPlaylist] = useState<Playlist>(() => {
     if (typeof window === "undefined") {
       return DEFAULT_PLAYLIST;
@@ -44,10 +45,13 @@ export default function Home() {
 
     const metadata = await getVideoMetadata(parsed.videoId);
 
+    const fallbackId = () => {
+      fallbackIdCounter.current += 1;
+      return `${Date.now()}-${fallbackIdCounter.current}`;
+    };
+
     const newVideo: Video = {
-      id:
-        globalThis.crypto?.randomUUID?.() ??
-        `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+      id: globalThis.crypto?.randomUUID?.() ?? fallbackId(),
       title: metadata.title,
       url: parsed.streamingUrl,
       driveId: parsed.videoId,
@@ -84,10 +88,19 @@ export default function Home() {
       }
 
       const nextVideos = current.videos.filter((video) => video.id !== videoId);
-      const nextIndex =
-        nextVideos.length === 0
-          ? 0
-          : Math.min(current.currentIndex > removingIndex ? current.currentIndex - 1 : current.currentIndex, nextVideos.length - 1);
+      if (nextVideos.length === 0) {
+        const updated: Playlist = {
+          videos: nextVideos,
+          currentIndex: 0,
+          lastUpdated: Date.now(),
+        };
+        savePlaylist(updated);
+        return updated;
+      }
+
+      const decrementedIndex =
+        current.currentIndex > removingIndex ? current.currentIndex - 1 : current.currentIndex;
+      const nextIndex = Math.min(decrementedIndex, nextVideos.length - 1);
 
       const updated: Playlist = {
         videos: nextVideos,

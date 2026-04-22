@@ -58,7 +58,7 @@ export function parseGoogleDriveUrl(url: string): { videoId: string; streamingUr
 
 export async function getVideoMetadata(videoId: string): Promise<VideoMetadata> {
   return {
-    title: `Google Drive Video ${videoId.slice(0, 8)}`,
+    title: `Google Drive Video ${videoId.slice(0, 12)}`,
     thumbnail: `https://drive.google.com/thumbnail?id=${encodeURIComponent(videoId)}&sz=w1000`,
   };
 }

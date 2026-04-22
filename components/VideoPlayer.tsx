@@ -175,7 +175,8 @@ export function VideoPlayer({ video, onEnded }: VideoPlayerProps) {
       return;
     }
 
-    activeVideo.currentTime = Math.max(0, Math.min(time, activeVideo.duration || time));
+    const maxSeek = Number.isFinite(activeVideo.duration) && activeVideo.duration > 0 ? activeVideo.duration : time;
+    activeVideo.currentTime = Math.max(0, Math.min(time, maxSeek));
   }
 
   async function toggleFullscreen() {
