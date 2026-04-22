@@ -221,7 +221,11 @@ export function VideoPlayer({ video, onEnded }: VideoPlayerProps) {
 
       if (event.key === "ArrowRight") {
         event.preventDefault();
-        activeVideo.currentTime = Math.min(activeVideo.currentTime + 10, activeVideo.duration || activeVideo.currentTime + 10);
+        if (Number.isFinite(activeVideo.duration) && activeVideo.duration > 0) {
+          activeVideo.currentTime = Math.min(activeVideo.currentTime + 10, activeVideo.duration);
+        } else {
+          activeVideo.currentTime += 10;
+        }
       }
     };
 

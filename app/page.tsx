@@ -45,7 +45,9 @@ export default function Home() {
     const metadata = await getVideoMetadata(parsed.videoId);
 
     const newVideo: Video = {
-      id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}`,
+      id:
+        globalThis.crypto?.randomUUID?.() ??
+        `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
       title: metadata.title,
       url: parsed.streamingUrl,
       driveId: parsed.videoId,
