@@ -51,7 +51,7 @@ export default function Home() {
     };
 
     const newVideo: Video = {
-      id: globalThis.crypto?.randomUUID?.() ?? fallbackId(),
+      id: globalThis.crypto?.randomUUID() ?? fallbackId(),
       title: metadata.title,
       url: parsed.streamingUrl,
       driveId: parsed.videoId,

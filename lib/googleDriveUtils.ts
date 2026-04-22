@@ -2,6 +2,7 @@ import { VideoMetadata } from "./types";
 
 const GOOGLE_DRIVE_HOSTS = new Set(["drive.google.com", "www.drive.google.com"]);
 const DRIVE_ID_REGEX = /^[a-zA-Z0-9_-]{10,}$/;
+const TITLE_ID_PREVIEW_LENGTH = 12;
 
 export function extractVideoId(url: string): string | null {
   if (!url?.trim()) {
@@ -58,7 +59,7 @@ export function parseGoogleDriveUrl(url: string): { videoId: string; streamingUr
 
 export async function getVideoMetadata(videoId: string): Promise<VideoMetadata> {
   return {
-    title: `Google Drive Video ${videoId.slice(0, 12)}`,
+    title: `Google Drive Video ${videoId.slice(0, TITLE_ID_PREVIEW_LENGTH)}`,
     thumbnail: `https://drive.google.com/thumbnail?id=${encodeURIComponent(videoId)}&sz=w1000`,
   };
 }
